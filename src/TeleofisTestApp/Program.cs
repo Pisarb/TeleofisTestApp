@@ -14,7 +14,7 @@ namespace TeleofisTestApp
         static void Main(string[] args)
         {
             AsyncWrxTcpDeviceAuthorizer deviceAuthorizer = new AsyncWrxTcpDeviceAuthorizer(0, "354190023896443", "0.1", "1.0", "0000", WrxTcpChannelType.Service);
-            AsyncWrxTcpDeviceAuthorizer deviceAuthorizer1 = new AsyncWrxTcpDeviceAuthorizer(0, "354190023896443", "0.1", "1.0", "0000", WrxTcpChannelType.Main);            
+            AsyncWrxTcpDeviceAuthorizer deviceAuthorizer1 = new AsyncWrxTcpDeviceAuthorizer(0, "354190023896443", "0.1", "1.0", "0000", WrxTcpChannelType.Main);
             IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9000);
             var sock = SocketFactory.Instance.Create(SocketType.Stream, ProtocolType.Tcp);
             sock.ConnectAsync(endPoint);
@@ -33,25 +33,22 @@ namespace TeleofisTestApp
                 SupplyVoltage = 800,
                 OutputAlarmDueTime = 1,
                 OutputAlarmDuration = 3,
-                OutputAlarmSchedule = 5,
+                OutputAlarmSchedule = 6,
                 OutputAlarmType = WrxAlarmType.Monthly
             };
             AsyncWrxCommandHandler handler = new AsyncWrxCommandHandler(model);
             WrxPacketReader reader = new WrxPacketReader(inputStream);
             WrxPacketWriter writer = new WrxPacketWriter(outputStream);
             WrxCommandServer wrxCommandServer = new WrxCommandServer(inputStream, outputStream, handler);
-            //WrxTcpAuthorizationData data = new WrxTcpAuthorizationData(0, "354190023896443", "0.1", "1.0", "0000", WrxTcpChannelType.Service);
             Authorize(reader, writer, deviceAuthorizer, wrxCommandServer);
+            Console.WriteLine(Convert.ToString(model.OutputAlarmSchedule, 2));
             Console.ReadKey();
-
-
-
         }
         private static async void Authorize(WrxPacketReader reader, WrxPacketWriter writer, AsyncWrxTcpDeviceAuthorizer deviceAuthorizer, WrxCommandServer wrxCommandServer)
         {
-            await WrxTcpDeviceAuthorization.AuthorizeAsync(reader, writer, deviceAuthorizer);
-            while(true)
-            await wrxCommandServer.ProcessNextAsync();
+             await WrxTcpDeviceAuthorization.AuthorizeAsync(reader, writer, deviceAuthorizer);
+            while (true)
+                await wrxCommandServer.ProcessNextAsync();
         }
     }
 }
