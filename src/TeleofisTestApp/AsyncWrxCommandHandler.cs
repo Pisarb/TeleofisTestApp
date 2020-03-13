@@ -13,7 +13,7 @@ namespace TeleofisTestApp
 
         public AsyncWrxCommandHandler(TeleofisModel teleofisModel)
         {
-            _model = teleofisModel;            
+            _model = teleofisModel;
         }
         public ValueTask AuthorizeSettingsPasswordAsync(string value, CancellationToken cancellationToken = default)
         {
@@ -79,6 +79,11 @@ namespace TeleofisTestApp
         public ValueTask<WrxAlarmType> GetOutputAlarmTypeAsync(CancellationToken cancellationToken = default)
         {
             return new ValueTask<WrxAlarmType>(_model.OutputAlarmType);
+        }
+
+        public ValueTask<(WrxOutputState, uint)> GetOutputStateWithSwitchbackSecondsAsync(CancellationToken cancellationToken = default)
+        {
+            return new ValueTask<(WrxOutputState, uint)>((_model.OutputState, 0));
         }
 
         public ValueTask<uint> GetSupplyVoltageMillivoltsAsync(CancellationToken cancellationToken = default)

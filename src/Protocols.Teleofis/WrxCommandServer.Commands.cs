@@ -68,6 +68,7 @@ namespace Swsu.StreetLights.Protocols.Teleofis
 
                 [WrxDataCommands.OutputStateWithSwitchbackSeconds] = new CommandEntry<(WrxOutputState, uint)>(
                     Tuple(Enum<WrxOutputState>(Byte), UInt32),
+                    onGetData: (h, t) => h.GetOutputStateWithSwitchbackSecondsAsync(t),
                     onSetData: (h, v, t) => h.SetOutputStateWithSwitchbackSecondsAsync(v, t)),
 
                 [WrxDataCommands.BatteryVoltageMillivolts] = new CommandEntry<uint>(

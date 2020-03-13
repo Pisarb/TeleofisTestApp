@@ -153,6 +153,14 @@ namespace Swsu.StreetLights.Protocols.Teleofis
         ValueTask SetOutputStateAsync(WrxOutputState value, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// НЕДОКУМЕНТИРОВАННАЯ ВОЗМОЖНОСТЬ: чтение состояния реле.
+        /// Команда: <c>0x92</c>.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        ValueTask<(WrxOutputState, uint)> GetOutputStateWithSwitchbackSecondsAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Установить состояние реле с временем обратного переключения.
         /// Команда: <c>0x92</c>.
         /// </summary>

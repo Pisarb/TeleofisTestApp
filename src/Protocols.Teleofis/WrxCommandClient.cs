@@ -151,9 +151,9 @@ namespace Swsu.StreetLights.Protocols.Teleofis
             return GetDataAsync(WrxDataCommands.OutputAlarmType, Enum<WrxAlarmType>(Byte), cancellationToken);
         }
 
-        public ValueTask<byte> GetOutputStateAsync(CancellationToken cancellationToken = default)
+        public ValueTask<(WrxOutputState, uint)> GetOutputStateWithSwitchbackSecondsAsync(CancellationToken cancellationToken = default)
         {
-            return GetDataAsync(WrxDataCommands.OutputState, Byte, cancellationToken);
+            return GetDataAsync(WrxDataCommands.OutputStateWithSwitchbackSeconds, Tuple(Enum<WrxOutputState>(Byte), UInt32), cancellationToken);
         }
 
         public ValueTask<uint> GetSupplyVoltageMillivoltsAsync(CancellationToken cancellationToken = default)

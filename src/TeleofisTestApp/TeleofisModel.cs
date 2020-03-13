@@ -7,6 +7,14 @@ namespace TeleofisTestApp
     {
         private WrxOutputState _outputState;
 
+        private bool _isForcedSwitch;
+
+        private uint _localTime = Convert.ToUInt32((DateTime.Now - DateTime.UnixEpoch).TotalSeconds);
+
+        private DateTime _lastTime = DateTime.Now;
+
+        private DateTime _outputStateSwitchTime  = DateTime.Now;
+
         public string Immei { get; set; }
 
         public string AuthorizeSettingsPassword { get; set; }
@@ -24,7 +32,17 @@ namespace TeleofisTestApp
             get => GetCurrentInputVoltage();
         } //5 V on, 0 V off
 
-        public uint LocalTime { get; set; } = Convert.ToUInt32((DateTime.Now - DateTime.UnixEpoch).TotalSeconds);
+        public uint LocalTime
+        {
+            get
+            {
+                var span = DateTime.Now - _lastTime;
+                _localTime += (uint)span.TotalSeconds;
+                _lastTime = DateTime.Now;
+                return _localTime;
+            }
+            set => _localTime = value;
+        }
 
         public ushort OutputAlarmDueTime { get; set; }
 
@@ -38,7 +56,11 @@ namespace TeleofisTestApp
 
         public WrxOutputState OutputState
         {
-            get => _outputState;
+            get
+            {
+                CheckOutputState();
+                return _outputState;
+            }
             set
             {
                 _outputState = value;
@@ -48,7 +70,7 @@ namespace TeleofisTestApp
 
         public (WrxOutputState, uint) OutputStateWithSwitchback { get; set; }
 
-        private DateTime _outputStateSwitchTime;
+
 
         private uint GetCurrentInputVoltage()
         {
@@ -65,7 +87,17 @@ namespace TeleofisTestApp
                     return 0;
                 return Convert.ToUInt32(Math.Round(Math.Cos(Math.PI / 2 * 1 / (21 - span.TotalMilliseconds)) * 5000, 0));
             }
+            //Вынести delay в config
+        }
 
+        private void CheckOutputState() //monthly
+        {
+            int now = DateTime.Now.Hour * 60 + DateTime.Now.Minute;
+            var dif = (now - OutputAlarmDueTime) * 60;
+            if (dif >= 0 && dif <= OutputAlarmDuration)
+                _outputState = WrxOutputState.On;
+            else
+                _outputState = WrxOutputState.Off;
         }
 
     }
