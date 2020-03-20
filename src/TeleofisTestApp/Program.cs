@@ -5,7 +5,6 @@ using Swsu.StreetLights.Protocols.Teleofis.Packets;
 using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading.Tasks;
 
 namespace TeleofisTestApp
 {
@@ -14,7 +13,6 @@ namespace TeleofisTestApp
         static void Main(string[] args)
         {
             AsyncWrxTcpDeviceAuthorizer deviceAuthorizer = new AsyncWrxTcpDeviceAuthorizer(0, "354190023896443", "0.1", "1.0", "0000", WrxTcpChannelType.Service);
-            AsyncWrxTcpDeviceAuthorizer deviceAuthorizer1 = new AsyncWrxTcpDeviceAuthorizer(0, "354190023896443", "0.1", "1.0", "0000", WrxTcpChannelType.Main);
             IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9000);
             var sock = SocketFactory.Instance.Create(SocketType.Stream, ProtocolType.Tcp);
             sock.ConnectAsync(endPoint);
@@ -27,11 +25,11 @@ namespace TeleofisTestApp
                 SignalStrength = 20,
                 WrxGsmMode = WrxGsmMode.ThreeG,
                 DiagnosticsLevel = WrxDiagnosticsLevel.Messages,
-                Immei = "354190023896443",           
+                Immei = "354190023896443",
                 SupplyVoltage = 800,
                 OutputAlarmDueTime = 1,
                 OutputAlarmDuration = 3,
-                OutputAlarmSchedule = 6,
+                OutputAlarmSchedule = (uint)Math.Pow(2, DateTime.Now.Day - 1),
                 OutputAlarmType = WrxAlarmType.Monthly
             };
             AsyncWrxCommandHandler handler = new AsyncWrxCommandHandler(model);
@@ -39,12 +37,12 @@ namespace TeleofisTestApp
             WrxPacketWriter writer = new WrxPacketWriter(outputStream);
             WrxCommandServer wrxCommandServer = new WrxCommandServer(inputStream, outputStream, handler);
             Authorize(reader, writer, deviceAuthorizer, wrxCommandServer);
-            Console.WriteLine(Convert.ToString(model.OutputAlarmSchedule, 2));
+            Console.WriteLine("Включился");
             Console.ReadKey();
         }
         private static async void Authorize(WrxPacketReader reader, WrxPacketWriter writer, AsyncWrxTcpDeviceAuthorizer deviceAuthorizer, WrxCommandServer wrxCommandServer)
         {
-             await WrxTcpDeviceAuthorization.AuthorizeAsync(reader, writer, deviceAuthorizer);
+            await WrxTcpDeviceAuthorization.AuthorizeAsync(reader, writer, deviceAuthorizer);
             while (true)
                 await wrxCommandServer.ProcessNextAsync();
         }
