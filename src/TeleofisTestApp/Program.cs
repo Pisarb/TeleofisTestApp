@@ -29,7 +29,7 @@ namespace TeleofisTestApp
                 SupplyVoltage = 800,
                 OutputAlarmDueTime = 1,
                 OutputAlarmDuration = 3,
-                OutputAlarmSchedule = (uint)Math.Pow(2, DateTime.Now.Day - 1),
+                OutputAlarmSchedule = 0,
                 OutputAlarmType = WrxAlarmType.Monthly
             };
             AsyncWrxCommandHandler handler = new AsyncWrxCommandHandler(model);

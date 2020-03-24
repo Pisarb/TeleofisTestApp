@@ -61,7 +61,7 @@ namespace TeleofisTestApp.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на 50000.
+        ///   Ищет локализованную строку, похожую на 100000.
         /// </summary>
         internal static string Delay {
             get {

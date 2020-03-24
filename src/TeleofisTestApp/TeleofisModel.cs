@@ -20,7 +20,11 @@ namespace TeleofisTestApp
 
         private uint _maxVoltage = 5000;
 
-        private double _delay;
+        private double _voltageChangeDelay;
+
+        private bool _isScheduleUsed = false;
+
+        private uint _outputAlarmSchedule;
 
         public string Immei { get; set; }
 
@@ -34,7 +38,14 @@ namespace TeleofisTestApp
 
         public byte SignalStrength { get; set; }
 
-        public uint InputVoltage => GetCurrentInputVoltage(DateTime.Now);
+        public uint InputVoltage
+        {
+            get
+            {
+                var outputState = OutputState;
+                return GetInputVoltage((DateTime.Now.Hour * 3600 + DateTime.Now.Minute * 60 + DateTime.Now.Second - _outputStateSwitchTime) * 1000 + DateTime.Now.Millisecond, outputState);
+            }
+        }
 
         public uint LocalTime
         {
@@ -52,7 +63,15 @@ namespace TeleofisTestApp
 
         public uint OutputAlarmDuration { get; set; }
 
-        public uint OutputAlarmSchedule { get; set; }
+        public uint OutputAlarmSchedule
+        {
+            get => _outputAlarmSchedule;
+            set
+            {
+                _outputAlarmSchedule = value;
+                _isScheduleUsed = true;
+            }
+        }
 
         public WrxAlarmType OutputAlarmType { get; set; }
 
@@ -67,14 +86,12 @@ namespace TeleofisTestApp
             }
             set
             {
-                _voltageBeforeSwitch = GetCurrentInputVoltage(DateTime.Now);
-                _outputState = value;
+                _voltageBeforeSwitch = GetInputVoltage((DateTime.Now.Hour * 3600 + DateTime.Now.Minute * 60 + DateTime.Now.Second - _outputStateSwitchTime) * 1000 + DateTime.Now.Millisecond, _outputState);
                 _outputStateSwitchTime = DateTime.Now.Hour * 3600 + DateTime.Now.Minute * 60 + DateTime.Now.Second;
+                _outputState = value;
             }
-        }
-        //TODO : GetCurrentInputVoltage if was switched while not fully charged      
+        } 
         //TODO : power surges simulation
-        //Max
         public uint Delay
         {
             get;
@@ -84,65 +101,66 @@ namespace TeleofisTestApp
         public TeleofisModel()
         {
             var rm = new ResourceManager("TeleofisTestApp.Properties.Resources", Assembly.GetExecutingAssembly());
-            _delay = Convert.ToDouble(rm.GetString("Delay"));
+            _voltageChangeDelay = Convert.ToDouble(rm.GetString("Delay"));
         }
 
 
-        private uint GetCurrentInputVoltage(DateTime dateTime)
+        private uint GetInputVoltage(int diffMilliseconds, WrxOutputState outputState)
         {
-            
-            if (OutputState == WrxOutputState.On)
+
+            if (outputState == WrxOutputState.On)
             {
-                var milliseconds = (dateTime.Hour * 3600 + dateTime.Minute * 60 + dateTime.Second - _outputStateSwitchTime) * 1000 + dateTime.Millisecond;
-                var dif = (double)_voltageBeforeSwitch / _maxVoltage;
-                if (milliseconds < 0 || (milliseconds / _delay) + dif >= 1)
-                    return 5000;
-                return Convert.ToUInt32(Math.Round(((milliseconds / _delay) + dif) * _maxVoltage, 0));
+                var diff = (double)_voltageBeforeSwitch / _maxVoltage;
+                if (diffMilliseconds < 0 || (diffMilliseconds / _voltageChangeDelay) + diff >= 1)
+                    return _maxVoltage;
+                return Convert.ToUInt32(Math.Round(((diffMilliseconds / _voltageChangeDelay) + diff) * _maxVoltage, 0));
             }
             else
             {
-                var milliseconds = (dateTime.Hour * 3600 + dateTime.Minute * 60 + dateTime.Second - _outputStateSwitchTime) * 1000 + dateTime.Millisecond;
                 var dif = (double)_voltageBeforeSwitch / _maxVoltage;
-                if (milliseconds < 0 || (((_delay - milliseconds) / _delay) - 1 + dif) <= 0)
+                if (diffMilliseconds < 0 || (((_voltageChangeDelay - diffMilliseconds) / _voltageChangeDelay) - 1 + dif) <= 0)
                     return 0;
-                return Convert.ToUInt32(Math.Round((((_delay - milliseconds) / _delay) - 1 + dif) * _maxVoltage, 0));
+                return Convert.ToUInt32(Math.Round((((_voltageChangeDelay - diffMilliseconds) / _voltageChangeDelay) - 1 + dif) * _maxVoltage, 0));
             }
         }
 
         private void CheckOutputState()
         {
-            if (CheckPickedDay(OutputAlarmSchedule, DateTime.Now.Day))
+            if (CheckPickedDay(OutputAlarmSchedule, DateTime.Now.Day) && _isScheduleUsed) //ну такое
             {
                 int now = DateTime.Now.Hour * 60 + DateTime.Now.Minute;
-                var dif = (now - OutputAlarmDueTime) * 60;
-                if (dif >= 0 && dif <= OutputAlarmDuration && _outputState != WrxOutputState.On)
+                var diff = (now - OutputAlarmDueTime) * 60 + DateTime.Now.Second;
+                if (diff >= 0)
                 {
-                    _outputState = WrxOutputState.On;
-                    _outputStateSwitchTime = OutputAlarmDueTime * 60;
-                }
-                else if (_outputState != WrxOutputState.Off)
-                {
-                    _outputState = WrxOutputState.Off;
-                    _outputStateSwitchTime = Convert.ToInt32(OutputAlarmDueTime * 60 + OutputAlarmDuration);
-                    Delay = 0;
+                    if (diff <= OutputAlarmDuration && _outputState != WrxOutputState.On)
+                    {
+                        _voltageBeforeSwitch = GetInputVoltage(diff * 1000 + DateTime.Now.Millisecond, _outputState);
+                        _outputState = WrxOutputState.On;
+                        _outputStateSwitchTime = OutputAlarmDueTime * 60;
+                    }
+                    else if (diff > OutputAlarmDuration && _outputState != WrxOutputState.Off)
+                    {
+                        _voltageBeforeSwitch = GetInputVoltage(diff * 1000 + DateTime.Now.Millisecond, _outputState);
+                        _outputState = WrxOutputState.Off;
+                        _outputStateSwitchTime = Convert.ToInt32(OutputAlarmDueTime * 60 + OutputAlarmDuration);
+                        _isScheduleUsed = false;
+                        Delay = 0;
+                    }
                 }
             }
             if (Delay != 0)
             {
-                var dif = DateTime.Now.Hour * 3600 + DateTime.Now.Minute * 60 + DateTime.Now.Second - _outputStateSwitchTime;
-                if (dif < Delay)
+                var diff = DateTime.Now.Hour * 3600 + DateTime.Now.Minute * 60 + DateTime.Now.Second - _outputStateSwitchTime;
+                if (diff < Delay && _outputState != WrxOutputState.On)
                 {
+                    _voltageBeforeSwitch = GetInputVoltage(diff * 1000 + DateTime.Now.Millisecond, _outputState);
                     _outputState = WrxOutputState.On;
                 }
-                else
-                {                   
-                    int hour = _outputStateSwitchTime / 3600;
-                    int minute = (_outputStateSwitchTime - hour * 3600) / 60;
-                    int second = _outputStateSwitchTime - hour * 3600 - minute * 60;
-                    DateTime dt = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hour, minute, second);
+                else if (diff >= Delay)
+                {
+                    _voltageBeforeSwitch = GetInputVoltage(diff * 1000 + DateTime.Now.Millisecond, _outputState);
                     _outputStateSwitchTime += (int)Delay;
                     Delay = 0;
-                    _voltageBeforeSwitch = GetCurrentInputVoltage(dt);
                     _outputState = WrxOutputState.Off;
                 }
             }

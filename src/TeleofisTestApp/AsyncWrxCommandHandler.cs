@@ -130,26 +130,30 @@ namespace TeleofisTestApp
         public ValueTask SetOutputStateAsync(WrxOutputState value, CancellationToken cancellationToken = default)
         {
             if (_model.OutputState != value)
+            {
                 _model.OutputState = value;
+                _model.Delay = 0;                
+            }
             return new ValueTask();
         }
 
         public ValueTask SetOutputStateWithSwitchbackSecondsAsync((WrxOutputState, uint) value, CancellationToken cancellationToken = default)
         {
-            _model.OutputState = value.Item1;
             _model.Delay = value.Item2;
+            _model.OutputState = value.Item1;
             return new ValueTask();
         }
 
         public ValueTask SetResetAsync(uint value, CancellationToken cancellationToken = default)
         {
+            //TODO: RESET
             //_model.Reset = value;
             return new ValueTask();
         }
 
         public ValueTask SetSettingsPasswordAsync(string value, CancellationToken cancellationToken = default)
         {
-
+            //TODO: PASSWORD
             return new ValueTask();
         }
     }
