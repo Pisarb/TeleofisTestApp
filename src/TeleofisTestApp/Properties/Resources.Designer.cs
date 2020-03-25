@@ -63,9 +63,9 @@ namespace TeleofisTestApp.Properties {
         /// <summary>
         ///   Ищет локализованную строку, похожую на 100000.
         /// </summary>
-        internal static string Delay {
+        internal static string VoltageChangeDelayMilliseconds {
             get {
-                return ResourceManager.GetString("Delay", resourceCulture);
+                return ResourceManager.GetString("VoltageChangeDelayMilliseconds", resourceCulture);
             }
         }
     }

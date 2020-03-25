@@ -18,7 +18,7 @@ namespace TeleofisTestApp
 
         private uint _voltageBeforeSwitch = 0;
 
-        private uint _maxVoltage = 5000;
+        private uint _maxInputVoltage = 5000;
 
         private double _voltageChangeDelay;
 
@@ -26,17 +26,17 @@ namespace TeleofisTestApp
 
         private uint _outputAlarmSchedule;
 
-        public string Immei { get; set; }
+        public string Imei { get; }
 
         public string AuthorizeSettingsPassword { get; set; }
 
-        public uint BatteryVoltage { get; set; }
+        public uint BatteryVoltage { get; } = 200;
 
         public WrxDiagnosticsLevel DiagnosticsLevel { get; set; }
 
         public WrxGsmMode WrxGsmMode { get; set; }
 
-        public byte SignalStrength { get; set; }
+        public byte SignalStrength { get; } = 20;
 
         public uint InputVoltage
         {
@@ -47,10 +47,12 @@ namespace TeleofisTestApp
             }
         }
 
-        public uint LocalTime
+        public uint LocalTimeSeconds
         {
             get
             {
+                if (_lastTime.Day != DateTime.Now.Day && OutputAlarmSchedule != 0)
+                    _isScheduleUsed = true;
                 var span = DateTime.Now - _lastTime;
                 _localTime += (uint)span.TotalSeconds;
                 _lastTime = DateTime.Now;
@@ -59,9 +61,9 @@ namespace TeleofisTestApp
             set => _localTime = value;
         }
 
-        public ushort OutputAlarmDueTime { get; set; }
+        public ushort OutputAlarmDueTimeMinutes { get; set; }
 
-        public uint OutputAlarmDuration { get; set; }
+        public uint OutputAlarmDurationSeconds { get; set; }
 
         public uint OutputAlarmSchedule
         {
@@ -75,7 +77,7 @@ namespace TeleofisTestApp
 
         public WrxAlarmType OutputAlarmType { get; set; }
 
-        public uint SupplyVoltage { get; set; }
+        public uint SupplyVoltage { get; } = 800;
 
         public WrxOutputState OutputState
         {
@@ -90,77 +92,85 @@ namespace TeleofisTestApp
                 _outputStateSwitchTime = DateTime.Now.Hour * 3600 + DateTime.Now.Minute * 60 + DateTime.Now.Second;
                 _outputState = value;
             }
-        } 
+        }
         //TODO : power surges simulation
-        public uint Delay
+        //TODO : reset _isScheduleUsed daily, may work
+        //TODO : timeout
+        public uint SwitchbackDelaySeconds
         {
             get;
             set;
         }
 
-        public TeleofisModel()
+        public TeleofisModel(string imei)
         {
             var rm = new ResourceManager("TeleofisTestApp.Properties.Resources", Assembly.GetExecutingAssembly());
-            _voltageChangeDelay = Convert.ToDouble(rm.GetString("Delay"));
+            _voltageChangeDelay = Convert.ToDouble(rm.GetString("VoltageChangeDelayMilliseconds"));
+            Imei = imei;
+        }
+
+
+        public TeleofisModel(uint maxInputVoltage, string imei) : this(imei)
+        {
+            _maxInputVoltage = maxInputVoltage;
         }
 
 
         private uint GetInputVoltage(int diffMilliseconds, WrxOutputState outputState)
         {
-
             if (outputState == WrxOutputState.On)
             {
-                var diff = (double)_voltageBeforeSwitch / _maxVoltage;
+                var diff = (double)_voltageBeforeSwitch / _maxInputVoltage;
                 if (diffMilliseconds < 0 || (diffMilliseconds / _voltageChangeDelay) + diff >= 1)
-                    return _maxVoltage;
-                return Convert.ToUInt32(Math.Round(((diffMilliseconds / _voltageChangeDelay) + diff) * _maxVoltage, 0));
+                    return _maxInputVoltage;
+                return Convert.ToUInt32(Math.Round(((diffMilliseconds / _voltageChangeDelay) + diff) * _maxInputVoltage, 0));
             }
             else
             {
-                var dif = (double)_voltageBeforeSwitch / _maxVoltage;
+                var dif = (double)_voltageBeforeSwitch / _maxInputVoltage;
                 if (diffMilliseconds < 0 || (((_voltageChangeDelay - diffMilliseconds) / _voltageChangeDelay) - 1 + dif) <= 0)
                     return 0;
-                return Convert.ToUInt32(Math.Round((((_voltageChangeDelay - diffMilliseconds) / _voltageChangeDelay) - 1 + dif) * _maxVoltage, 0));
+                return Convert.ToUInt32(Math.Round((((_voltageChangeDelay - diffMilliseconds) / _voltageChangeDelay) - 1 + dif) * _maxInputVoltage, 0));
             }
         }
 
         private void CheckOutputState()
         {
-            if (CheckPickedDay(OutputAlarmSchedule, DateTime.Now.Day) && _isScheduleUsed) //ну такое
+            if (_isScheduleUsed && CheckPickedDay(OutputAlarmSchedule, DateTime.Now.Day)) //ну такое
             {
                 int now = DateTime.Now.Hour * 60 + DateTime.Now.Minute;
-                var diff = (now - OutputAlarmDueTime) * 60 + DateTime.Now.Second;
+                var diff = (now - OutputAlarmDueTimeMinutes) * 60 + DateTime.Now.Second;
                 if (diff >= 0)
                 {
-                    if (diff <= OutputAlarmDuration && _outputState != WrxOutputState.On)
+                    if (diff <= OutputAlarmDurationSeconds && _outputState != WrxOutputState.On)
                     {
                         _voltageBeforeSwitch = GetInputVoltage(diff * 1000 + DateTime.Now.Millisecond, _outputState);
                         _outputState = WrxOutputState.On;
-                        _outputStateSwitchTime = OutputAlarmDueTime * 60;
+                        _outputStateSwitchTime = OutputAlarmDueTimeMinutes * 60;
                     }
-                    else if (diff > OutputAlarmDuration && _outputState != WrxOutputState.Off)
+                    else if (diff > OutputAlarmDurationSeconds && _outputState != WrxOutputState.Off)
                     {
                         _voltageBeforeSwitch = GetInputVoltage(diff * 1000 + DateTime.Now.Millisecond, _outputState);
                         _outputState = WrxOutputState.Off;
-                        _outputStateSwitchTime = Convert.ToInt32(OutputAlarmDueTime * 60 + OutputAlarmDuration);
+                        _outputStateSwitchTime = Convert.ToInt32(OutputAlarmDueTimeMinutes * 60 + OutputAlarmDurationSeconds);
                         _isScheduleUsed = false;
-                        Delay = 0;
+                        SwitchbackDelaySeconds = 0;
                     }
                 }
             }
-            if (Delay != 0)
+            if (SwitchbackDelaySeconds != 0)
             {
                 var diff = DateTime.Now.Hour * 3600 + DateTime.Now.Minute * 60 + DateTime.Now.Second - _outputStateSwitchTime;
-                if (diff < Delay && _outputState != WrxOutputState.On)
+                if (diff < SwitchbackDelaySeconds && _outputState != WrxOutputState.On)
                 {
                     _voltageBeforeSwitch = GetInputVoltage(diff * 1000 + DateTime.Now.Millisecond, _outputState);
                     _outputState = WrxOutputState.On;
                 }
-                else if (diff >= Delay)
+                else if (diff >= SwitchbackDelaySeconds)
                 {
                     _voltageBeforeSwitch = GetInputVoltage(diff * 1000 + DateTime.Now.Millisecond, _outputState);
-                    _outputStateSwitchTime += (int)Delay;
-                    Delay = 0;
+                    _outputStateSwitchTime += (int)SwitchbackDelaySeconds;
+                    SwitchbackDelaySeconds = 0;
                     _outputState = WrxOutputState.Off;
                 }
             }
@@ -175,6 +185,62 @@ namespace TeleofisTestApp
                 return false;
             bin = new string(bin.ToCharArray().Reverse().ToArray());
             return bin[day - 1] == '1';
+        }
+
+        public void Reset()
+        {
+            AuthorizeSettingsPassword = "0000";
+            OutputAlarmDueTimeMinutes = 0;
+            OutputAlarmDurationSeconds = 0;
+            OutputAlarmSchedule = 0;
+            OutputAlarmType = WrxAlarmType.Off;
+            OutputState = WrxOutputState.Off;
+            SwitchbackDelaySeconds = 0;
+            _isScheduleUsed = false;
+        }
+        public static string GetNewImei()
+        {
+            var rnd = new Random();
+            string imei = default;
+            var digits = new int[14];
+            for (int i = 0; i < 14; i++)
+                digits[i] = rnd.Next(10);
+            var digitsCopy = new int[14];
+            Array.Copy(digits, digitsCopy, 14);
+            int sum = GetImeiSum(digitsCopy) % 10;
+            int lastNumber;
+            if (sum == 0)
+                lastNumber = 0;
+            else
+                lastNumber = 10 - sum;
+            for (int i = 0; i < 14; i++)
+                imei += digits[i].ToString();
+            imei += lastNumber.ToString();
+            return imei;
+        }
+
+        private static int GetImeiSum(int[] numbers)
+        {
+            int sum = 0;
+            if (numbers.Length != 14)
+                throw new Exception("Unexpected array length");
+            for (int i = 0; i < 14; i++)
+            {
+                if (i % 2 == 1)
+                    numbers[i] = 2 * numbers[i];
+                sum += DigitsSum(numbers[i]);
+            }
+            return sum;
+        }
+        private static int DigitsSum(int number)
+        {
+            int sum = 0;
+            while (number > 0)
+            {
+                sum += number % 10;
+                number /= 10;
+            }
+            return sum;
         }
     }
 }

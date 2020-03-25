@@ -1,7 +1,4 @@
 ﻿using Swsu.StreetLights.Protocols.Teleofis;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,7 +30,7 @@ namespace TeleofisTestApp
 
         public ValueTask<string> GetGsmImeiAsync(CancellationToken cancellationToken = default)
         {
-            return new ValueTask<string>(_model.Immei);
+            return new ValueTask<string>(_model.Imei);
         }
 
         public ValueTask<string> GetGsmIpAddressAsync(CancellationToken cancellationToken = default)
@@ -58,17 +55,17 @@ namespace TeleofisTestApp
 
         public ValueTask<uint> GetLocalTimeSecondsAsync(CancellationToken cancellationToken = default)
         {
-            return new ValueTask<uint>(_model.LocalTime);
+            return new ValueTask<uint>(_model.LocalTimeSeconds);
         }
 
         public ValueTask<ushort> GetOutputAlarmDueTimeMinutesAsync(CancellationToken cancellationToken = default)
         {
-            return new ValueTask<ushort>(_model.OutputAlarmDueTime);
+            return new ValueTask<ushort>(_model.OutputAlarmDueTimeMinutes);
         }
 
         public ValueTask<uint> GetOutputAlarmDurationSecondsAsync(CancellationToken cancellationToken = default)
         {
-            return new ValueTask<uint>(_model.OutputAlarmDuration);
+            return new ValueTask<uint>(_model.OutputAlarmDurationSeconds);
         }
 
         public ValueTask<uint> GetOutputAlarmScheduleAsync(CancellationToken cancellationToken = default)
@@ -99,19 +96,19 @@ namespace TeleofisTestApp
 
         public ValueTask SetLocalTimeSecondsAsync(uint value, CancellationToken cancellationToken = default)
         {
-            _model.LocalTime = value;
+            _model.LocalTimeSeconds = value;
             return new ValueTask();
         }
 
         public ValueTask SetOutputAlarmDueTimeMinutesAsync(ushort value, CancellationToken cancellationToken = default)
         {
-            _model.OutputAlarmDueTime = value;
+            _model.OutputAlarmDueTimeMinutes = value;
             return new ValueTask();
         }
 
         public ValueTask SetOutputAlarmDurationSecondsAsync(uint value, CancellationToken cancellationToken = default)
         {
-            _model.OutputAlarmDuration = value;
+            _model.OutputAlarmDurationSeconds = value;
             return new ValueTask();
         }
 
@@ -132,28 +129,27 @@ namespace TeleofisTestApp
             if (_model.OutputState != value)
             {
                 _model.OutputState = value;
-                _model.Delay = 0;                
+                _model.SwitchbackDelaySeconds = 0;
             }
             return new ValueTask();
         }
 
         public ValueTask SetOutputStateWithSwitchbackSecondsAsync((WrxOutputState, uint) value, CancellationToken cancellationToken = default)
         {
-            _model.Delay = value.Item2;
+            _model.SwitchbackDelaySeconds = value.Item2;
             _model.OutputState = value.Item1;
             return new ValueTask();
         }
 
         public ValueTask SetResetAsync(uint value, CancellationToken cancellationToken = default)
         {
-            //TODO: RESET
-            //_model.Reset = value;
+            //_model.Reset(); reset после каждого перезаписывания??????
             return new ValueTask();
         }
 
         public ValueTask SetSettingsPasswordAsync(string value, CancellationToken cancellationToken = default)
         {
-            //TODO: PASSWORD
+            _model.AuthorizeSettingsPassword = value;
             return new ValueTask();
         }
     }
