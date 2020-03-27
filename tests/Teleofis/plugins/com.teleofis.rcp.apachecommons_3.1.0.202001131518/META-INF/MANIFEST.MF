@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: com.teleofis.rcp.apachecommons
+Export-Package: org.apache.commons.lang3,org.apache.commons.lang3.buil
+ der,org.apache.commons.lang3.concurrent,org.apache.commons.lang3.even
+ t,org.apache.commons.lang3.exception,org.apache.commons.lang3.math,or
+ g.apache.commons.lang3.mutable,org.apache.commons.lang3.reflect,org.a
+ pache.commons.lang3.text,org.apache.commons.lang3.text.translate,org.
+ apache.commons.lang3.time,org.apache.commons.lang3.tuple
+Bundle-Name: ApacheCommons
+Bundle-Version: 3.1.0.202001131518
+Bundle-ClassPath: commons-lang3-3.1.jar
+Bundle-ManifestVersion: 2
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Vendor: Apache
+
+

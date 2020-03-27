@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: com.teleofis.rcp.jssc
+Export-Package: jssc;version="1.0.0"
+Bundle-Name: JSSC
+Bundle-Version: 2.8.0.202001131518
+Bundle-ClassPath: jssc.jar
+Bundle-ManifestVersion: 2
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Vendor: JSSC
+
+

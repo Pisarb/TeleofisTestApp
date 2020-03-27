@@ -26,6 +26,10 @@ namespace TeleofisTestApp
 
         private uint _outputAlarmSchedule;
 
+        private ushort _outputAlarmDueTimeMinutes;
+
+        private uint _outputAlarmDurationSeconds;
+
         public string Imei { get; }
 
         public string AuthorizeSettingsPassword { get; set; }
@@ -61,9 +65,29 @@ namespace TeleofisTestApp
             set => _localTime = value;
         }
 
-        public ushort OutputAlarmDueTimeMinutes { get; set; }
+        public ushort OutputAlarmDueTimeMinutes
+        {
+            get => _outputAlarmDueTimeMinutes;
+            set
+            {
+                _outputAlarmDueTimeMinutes = value;
+                int now = DateTime.Now.Hour * 60 + DateTime.Now.Minute;
+                if (now <= OutputAlarmDueTimeMinutes || now * 60 + DateTime.Now.Second <= OutputAlarmDueTimeMinutes * 60 + OutputAlarmDurationSeconds)
+                    _isScheduleUsed = true;
+            }
+        }
 
-        public uint OutputAlarmDurationSeconds { get; set; }
+        public uint OutputAlarmDurationSeconds
+        {
+            get => _outputAlarmDurationSeconds;
+            set
+            {
+                _outputAlarmDurationSeconds = value;
+                int now = DateTime.Now.Hour * 60 + DateTime.Now.Minute;
+                if (now <= OutputAlarmDueTimeMinutes || now * 60 + DateTime.Now.Second <= OutputAlarmDueTimeMinutes * 60 + OutputAlarmDurationSeconds)
+                    _isScheduleUsed = true;
+            }
+        }
 
         public uint OutputAlarmSchedule
         {
@@ -71,7 +95,9 @@ namespace TeleofisTestApp
             set
             {
                 _outputAlarmSchedule = value;
-                _isScheduleUsed = true;
+                int now = DateTime.Now.Hour * 60 + DateTime.Now.Minute;
+                if (now <= OutputAlarmDueTimeMinutes || now * 60 + DateTime.Now.Second <= OutputAlarmDueTimeMinutes * 60 + OutputAlarmDurationSeconds)
+                    _isScheduleUsed = true;
             }
         }
 
@@ -91,6 +117,12 @@ namespace TeleofisTestApp
                 _voltageBeforeSwitch = GetInputVoltage((DateTime.Now.Hour * 3600 + DateTime.Now.Minute * 60 + DateTime.Now.Second - _outputStateSwitchTime) * 1000 + DateTime.Now.Millisecond, _outputState);
                 _outputStateSwitchTime = DateTime.Now.Hour * 3600 + DateTime.Now.Minute * 60 + DateTime.Now.Second;
                 _outputState = value;
+                if (value == WrxOutputState.Off)
+                {
+                    int now = DateTime.Now.Hour * 60 + DateTime.Now.Minute;
+                    if (now > OutputAlarmDueTimeMinutes)
+                        _isScheduleUsed = false;
+                }
             }
         }
         //TODO : power surges simulation
@@ -172,6 +204,9 @@ namespace TeleofisTestApp
                     _outputStateSwitchTime += (int)SwitchbackDelaySeconds;
                     SwitchbackDelaySeconds = 0;
                     _outputState = WrxOutputState.Off;
+                    int now = DateTime.Now.Hour * 60 + DateTime.Now.Minute;
+                    if (now > OutputAlarmDueTimeMinutes)
+                        _isScheduleUsed = false;
                 }
             }
         }
@@ -197,50 +232,6 @@ namespace TeleofisTestApp
             OutputState = WrxOutputState.Off;
             SwitchbackDelaySeconds = 0;
             _isScheduleUsed = false;
-        }
-        public static string GetNewImei()
-        {
-            var rnd = new Random();
-            string imei = default;
-            var digits = new int[14];
-            for (int i = 0; i < 14; i++)
-                digits[i] = rnd.Next(10);
-            var digitsCopy = new int[14];
-            Array.Copy(digits, digitsCopy, 14);
-            int sum = GetImeiSum(digitsCopy) % 10;
-            int lastNumber;
-            if (sum == 0)
-                lastNumber = 0;
-            else
-                lastNumber = 10 - sum;
-            for (int i = 0; i < 14; i++)
-                imei += digits[i].ToString();
-            imei += lastNumber.ToString();
-            return imei;
-        }
-
-        private static int GetImeiSum(int[] numbers)
-        {
-            int sum = 0;
-            if (numbers.Length != 14)
-                throw new Exception("Unexpected array length");
-            for (int i = 0; i < 14; i++)
-            {
-                if (i % 2 == 1)
-                    numbers[i] = 2 * numbers[i];
-                sum += DigitsSum(numbers[i]);
-            }
-            return sum;
-        }
-        private static int DigitsSum(int number)
-        {
-            int sum = 0;
-            while (number > 0)
-            {
-                sum += number % 10;
-                number /= 10;
-            }
-            return sum;
         }
     }
 }

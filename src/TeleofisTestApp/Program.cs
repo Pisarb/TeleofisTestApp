@@ -12,18 +12,18 @@ namespace TeleofisTestApp
     {
         static void Main(string[] args)
         {
-            var imei = TeleofisModel.GetNewImei();
+            var imei = TeleofisHelper.GetNewImei();
             AsyncWrxTcpDeviceAuthorizer deviceAuthorizer = new AsyncWrxTcpDeviceAuthorizer(0, imei, "0.1", "1.0", "0000", WrxTcpChannelType.Service);
             IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9000);
-            var sock = SocketFactory.Instance.Create(SocketType.Stream, ProtocolType.Tcp);
-            sock.ConnectAsync(endPoint);
-            SimpleSocketInputStream inputStream = new SimpleSocketInputStream(sock);
-            SimpleSocketOutputStream outputStream = new SimpleSocketOutputStream(sock);
+            var socket = SocketFactory.Instance.Create(SocketType.Stream, ProtocolType.Tcp);
+            socket.ConnectAsync(endPoint);
+            SimpleSocketInputStream inputStream = new SimpleSocketInputStream(socket);
+            SimpleSocketOutputStream outputStream = new SimpleSocketOutputStream(socket);
             var model = new TeleofisModel(imei)
             {
-                AuthorizeSettingsPassword = "0000",                
+                AuthorizeSettingsPassword = "0000",
                 WrxGsmMode = WrxGsmMode.ThreeG,
-                DiagnosticsLevel = WrxDiagnosticsLevel.Messages,                             
+                DiagnosticsLevel = WrxDiagnosticsLevel.Messages,
                 OutputAlarmDueTimeMinutes = 0,
                 OutputAlarmDurationSeconds = 0,
                 OutputAlarmSchedule = 0,
@@ -39,17 +39,16 @@ namespace TeleofisTestApp
         }
         private static async void Authorize(WrxPacketReader reader, WrxPacketWriter writer, AsyncWrxTcpDeviceAuthorizer deviceAuthorizer, WrxCommandServer wrxCommandServer)
         {
-            try 
+            try
             {
                 await WrxTcpDeviceAuthorization.AuthorizeAsync(reader, writer, deviceAuthorizer);
                 while (true)
                     await wrxCommandServer.ProcessNextAsync();
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
-            
         }
     }
 }

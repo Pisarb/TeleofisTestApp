@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workbench version="2.0">
+<workbenchAdvisor/>
+<window height="917" width="1430" x="229" y="75">
+<fastViewData fastViewLocation="1024"/>
+<perspectiveBar/>
+<coolbarLayout>
+<coolItem id="toolbar.main" itemType="typeToolBarContribution" x="38" y="22"/>
+<coolItem id="org.eclipse.ui.edit.text.actionSet.annotationNavigation" itemType="typeToolBarContribution" x="91" y="22"/>
+<coolItem id="org.eclipse.ui.edit.text.actionSet.navigation" itemType="typeToolBarContribution" x="38" y="22"/>
+</coolbarLayout>
+<page focus="true" label="&lt;Unknown Label&gt; - Main Perspective">
+<editors>
+<editorArea activeWorkbook="DefaultEditorWorkbook">
+<info part="DefaultEditorWorkbook">
+<folder appearance="1" expanded="2">
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
+</folder>
+</info>
+</editorArea>
+</editors>
+<views>
+<view id="com.teleofis.wrxconfiguration.view.SimSettingsView" partName="SIM карты">
+<viewState/>
+</view>
+<view id="com.teleofis.wrxconfiguration.view.AlarmOutputSettingsView" partName="Ввод/вывод">
+<viewState/>
+</view>
+<view id="com.teleofis.wrxconfiguration.view.IMEIView" partName="Список объектов">
+<viewState/>
+</view>
+<view id="com.teleofis.wrxconfiguration.view.DeviceInfoView" partName="Device Info">
+<viewState/>
+</view>
+<view id="com.teleofis.wrxconfiguration.view.ServiceSettingsView" partName="Служебный канал">
+<viewState/>
+</view>
+<view id="com.teleofis.wrxconfiguration.view.SerialSettingsView" partName="Интерфейсы">
+<viewState/>
+</view>
+<view id="com.teleofis.wrxconfiguration.view.AlarmSettingsView" partName="Расписание">
+<viewState/>
+</view>
+<view id="com.teleofis.wrxconfiguration.view.WorkSettingsView" partName="Рабочий режим">
+<viewState/>
+</view>
+<view id="com.teleofis.wrxconfiguration.view.AdminSettingsView" partName="Системные">
+<viewState/>
+</view>
+<view id="com.teleofis.wrxconfiguration.view.ConsoleView" partName="Отладочная консоль">
+<viewState/>
+</view>
+<view id="com.teleofis.wrxconfiguration.view.CsdSettingsView" partName="CSD соединение">
+<viewState/>
+</view>
+</views>
+<perspectives activePart="com.teleofis.wrxconfiguration.view.AlarmOutputSettingsView" activePerspective="com.teleofis.wrxconfiguration.perspective">
+<perspective editorAreaTrimState="2" editorAreaVisible="0" fixed="0" version="0.016">
+<descriptor class="com.teleofis.wrxconfiguration.Perspective" id="com.teleofis.wrxconfiguration.perspective" label="Main Perspective"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.annotationNavigation"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.navigation"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.convertLineDelimitersTo"/>
+<alwaysOnActionSet id="org.eclipse.ui.actionSet.keyBindings"/>
+<alwaysOnActionSet id="org.eclipse.ui.actionSet.openFiles"/>
+<hide_toolbar_item_id id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"/>
+<view id="com.teleofis.wrxconfiguration.view.WorkSettingsView"/>
+<view id="com.teleofis.wrxconfiguration.view.SerialSettingsView"/>
+<view id="com.teleofis.wrxconfiguration.view.SimSettingsView"/>
+<view id="com.teleofis.wrxconfiguration.view.AlarmSettingsView"/>
+<view id="com.teleofis.wrxconfiguration.view.AlarmOutputSettingsView"/>
+<view id="com.teleofis.wrxconfiguration.view.CsdSettingsView"/>
+<view id="com.teleofis.wrxconfiguration.view.ServiceSettingsView"/>
+<view id="com.teleofis.wrxconfiguration.view.AdminSettingsView"/>
+<view id="com.teleofis.wrxconfiguration.view.DeviceInfoView"/>
+<view id="com.teleofis.wrxconfiguration.view.ConsoleView"/>
+<view id="com.teleofis.wrxconfiguration.view.IMEIView"/>
+<fastViewBars/>
+<viewLayoutRec closeable="false" id="com.teleofis.wrxconfiguration.view.SimSettingsView" moveable="false"/>
+<viewLayoutRec closeable="false" id="com.teleofis.wrxconfiguration.view.AlarmOutputSettingsView" moveable="false"/>
+<viewLayoutRec closeable="false" id="com.teleofis.wrxconfiguration.view.IMEIView" moveable="false" showTitle="true" standalone="true"/>
+<viewLayoutRec id="com.teleofis.wrxconfiguration.view.DeviceInfoView" showTitle="false" standalone="true"/>
+<viewLayoutRec closeable="false" id="com.teleofis.wrxconfiguration.view.ServiceSettingsView" moveable="false"/>
+<viewLayoutRec closeable="false" id="com.teleofis.wrxconfiguration.view.SerialSettingsView" moveable="false"/>
+<viewLayoutRec closeable="false" id="com.teleofis.wrxconfiguration.view.AlarmSettingsView" moveable="false"/>
+<viewLayoutRec closeable="false" id="com.teleofis.wrxconfiguration.view.WorkSettingsView"/>
+<viewLayoutRec closeable="false" id="com.teleofis.wrxconfiguration.view.AdminSettingsView" moveable="false"/>
+<viewLayoutRec closeable="false" id="com.teleofis.wrxconfiguration.view.ConsoleView" moveable="false"/>
+<viewLayoutRec closeable="false" id="com.teleofis.wrxconfiguration.view.CsdSettingsView" moveable="false"/>
+<layout>
+<mainWindow>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@9e975">
+<folder activePageID="com.teleofis.wrxconfiguration.view.DeviceInfoView" appearance="4" expanded="2">
+<page content="com.teleofis.wrxconfiguration.view.DeviceInfoView" label="Device Info"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
+</folder>
+</info>
+<info folder="true" part="stickyFolderRight" ratio="0.7496444" ratioLeft="1054" ratioRight="352" relationship="2" relative="org.eclipse.ui.internal.ViewStack@9e975">
+<folder appearance="2" expanded="2">
+<page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
+</folder>
+</info>
+<info part="org.eclipse.ui.editorss" ratio="0.19985776" ratioLeft="281" ratioRight="1125" relationship="2" relative="org.eclipse.ui.internal.ViewStack@9e975"/>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@1ff34c6" ratio="0.74970347" ratioLeft="632" ratioRight="211" relationship="4" relative="org.eclipse.ui.internal.ViewStack@9e975">
+<folder activePageID="com.teleofis.wrxconfiguration.view.ConsoleView" appearance="2" expanded="2">
+<page content="com.teleofis.wrxconfiguration.view.ConsoleView" label="Отладочная консоль"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+</presentation>
+</folder>
+</info>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@122d8a0" ratio="0.49822065" ratioLeft="140" ratioRight="141" relationship="2" relative="org.eclipse.ui.internal.ViewStack@9e975">
+<folder activePageID="com.teleofis.wrxconfiguration.view.AlarmOutputSettingsView" appearance="2" expanded="2">
+<page content="com.teleofis.wrxconfiguration.view.WorkSettingsView" label="Рабочий режим"/>
+<page content="com.teleofis.wrxconfiguration.view.SerialSettingsView" label="Интерфейсы"/>
+<page content="com.teleofis.wrxconfiguration.view.SimSettingsView" label="SIM карты"/>
+<page content="com.teleofis.wrxconfiguration.view.AlarmSettingsView" label="Расписание"/>
+<page content="com.teleofis.wrxconfiguration.view.AlarmOutputSettingsView" label="Ввод/вывод"/>
+<page content="com.teleofis.wrxconfiguration.view.CsdSettingsView" label="CSD соединение"/>
+<page content="com.teleofis.wrxconfiguration.view.ServiceSettingsView" label="Служебный канал"/>
+<page content="com.teleofis.wrxconfiguration.view.AdminSettingsView" label="Системные"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+<part id="1"/>
+<part id="2"/>
+<part id="3"/>
+<part id="4"/>
+<part id="5"/>
+<part id="6"/>
+<part id="7"/>
+</presentation>
+</folder>
+</info>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@12ab28e" ratio="0.79432625" ratioLeft="112" ratioRight="29" relationship="2" relative="org.eclipse.ui.internal.ViewStack@122d8a0">
+<folder activePageID="com.teleofis.wrxconfiguration.view.IMEIView" appearance="3" expanded="2">
+<page content="com.teleofis.wrxconfiguration.view.IMEIView" label="Список объектов"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+</presentation>
+</folder>
+</info>
+</mainWindow>
+</layout>
+</perspective>
+</perspectives>
+<workingSets/>
+<navigationHistory/>
+</page>
+<workbenchWindowAdvisor/>
+<actionBarAdvisor/>
+<trimLayout>
+<trimArea IMemento.internal.id="1024">
+<trimItem IMemento.internal.id="org.eclipse.jface.action.StatusLineManager"/>
+<trimItem IMemento.internal.id="org.eclipse.ui.internal.progress.ProgressRegion"/>
+</trimArea>
+</trimLayout>
+</window>
+<mruList/>
+</workbench>

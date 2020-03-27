@@ -126,11 +126,8 @@ namespace TeleofisTestApp
 
         public ValueTask SetOutputStateAsync(WrxOutputState value, CancellationToken cancellationToken = default)
         {
-            if (_model.OutputState != value)
-            {
-                _model.OutputState = value;
-                _model.SwitchbackDelaySeconds = 0;
-            }
+            _model.OutputState = value;
+            _model.SwitchbackDelaySeconds = 0;
             return new ValueTask();
         }
 
