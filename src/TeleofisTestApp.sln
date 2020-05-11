@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Protocols.Teleofis", "Proto
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeleofisTestApp", "TeleofisTestApp\TeleofisTestApp.csproj", "{D54D2C73-5141-45AF-B9A7-254511C8CDE8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeleofisTestServer", "TeleofisTestServer\TeleofisTestServer.csproj", "{B0BBD110-C7C9-4426-BEB7-8E7FA0151981}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{D54D2C73-5141-45AF-B9A7-254511C8CDE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D54D2C73-5141-45AF-B9A7-254511C8CDE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D54D2C73-5141-45AF-B9A7-254511C8CDE8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B0BBD110-C7C9-4426-BEB7-8E7FA0151981}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B0BBD110-C7C9-4426-BEB7-8E7FA0151981}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B0BBD110-C7C9-4426-BEB7-8E7FA0151981}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B0BBD110-C7C9-4426-BEB7-8E7FA0151981}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,0 @@
-JAVA_VERSION="1.8.0_232"
-OS_NAME="Windows"
-OS_VERSION="5.1"
-OS_ARCH="i586"
-SOURCE=" .:c33739ac5a1a corba:b2a8287930e2 hotspot:4797d6934e8a jaxp:9dbc1484fae2 jaxws:0b1ea184d26c jdk:f7402bd0f83b langtools:38021fbe79c4 nashorn:1ae243c8e556"

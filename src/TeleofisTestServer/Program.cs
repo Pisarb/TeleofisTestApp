@@ -8,7 +8,7 @@ namespace TeleofisTestServer
         static void Main(string[] args)
         {
             AsyncWrxCommandHandler handler = new AsyncWrxCommandHandler();
-            WrxCommandClient client = new WrxCommandClient();
+            //WrxCommandClient client = new WrxCommandClient();
         }
     }
 }

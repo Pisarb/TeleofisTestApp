@@ -30,6 +30,8 @@ namespace TeleofisTestApp
 
         private uint _outputAlarmDurationSeconds;
 
+        private double _voltageTolerance;
+
         public string Imei { get; }
 
         public string AuthorizeSettingsPassword { get; set; }
@@ -47,7 +49,7 @@ namespace TeleofisTestApp
             get
             {
                 var outputState = OutputState;
-                return GetInputVoltage((DateTime.Now.Hour * 3600 + DateTime.Now.Minute * 60 + DateTime.Now.Second - _outputStateSwitchTime) * 1000 + DateTime.Now.Millisecond, outputState);
+                return Convert.ToUInt32(PowerSurgesRate() * GetInputVoltage((DateTime.Now.Hour * 3600 + DateTime.Now.Minute * 60 + DateTime.Now.Second - _outputStateSwitchTime) * 1000 + DateTime.Now.Millisecond, outputState));
             }
         }
 
@@ -125,26 +127,28 @@ namespace TeleofisTestApp
                 }
             }
         }
-        //TODO : power surges simulation
-        //TODO : reset _isScheduleUsed daily, may work
-        //TODO : timeout
+
         public uint SwitchbackDelaySeconds
         {
             get;
             set;
         }
 
-        public TeleofisModel(string imei)
+        private TeleofisModel(string imei)
         {
             var rm = new ResourceManager("TeleofisTestApp.Properties.Resources", Assembly.GetExecutingAssembly());
             _voltageChangeDelay = Convert.ToDouble(rm.GetString("VoltageChangeDelayMilliseconds"));
+            _voltageTolerance = Convert.ToDouble(rm.GetString("VoltageTolerance"));
             Imei = imei;
         }
 
 
-        public TeleofisModel(uint maxInputVoltage, string imei) : this(imei)
+        public TeleofisModel(string imei, uint maxInputVoltage = 5000, uint batteryVoltage = 200, byte signalStrength = 20, uint supplyVoltage = 800) : this(imei)
         {
             _maxInputVoltage = maxInputVoltage;
+            BatteryVoltage = batteryVoltage;
+            SignalStrength = signalStrength;
+            SupplyVoltage = supplyVoltage;
         }
 
 
@@ -168,7 +172,7 @@ namespace TeleofisTestApp
 
         private void CheckOutputState()
         {
-            if (_isScheduleUsed && CheckPickedDay(OutputAlarmSchedule, DateTime.Now.Day)) //ну такое
+            if (_isScheduleUsed && CheckPickedDay(OutputAlarmSchedule, DateTime.Now.Day))
             {
                 int now = DateTime.Now.Hour * 60 + DateTime.Now.Minute;
                 var diff = (now - OutputAlarmDueTimeMinutes) * 60 + DateTime.Now.Second;
@@ -220,6 +224,13 @@ namespace TeleofisTestApp
                 return false;
             bin = new string(bin.ToCharArray().Reverse().ToArray());
             return bin[day - 1] == '1';
+        }
+
+        private double PowerSurgesRate()
+        {
+            var rnd = new Random();
+            double deviation = rnd.Next(Convert.ToInt32(_voltageTolerance * 10) + 1);
+            return (1 - (deviation / 100));
         }
 
         public void Reset()

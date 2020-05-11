@@ -61,11 +61,20 @@ namespace TeleofisTestApp.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на 100000.
+        ///   Ищет локализованную строку, похожую на 10000.
         /// </summary>
         internal static string VoltageChangeDelayMilliseconds {
             get {
                 return ResourceManager.GetString("VoltageChangeDelayMilliseconds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на 0,1.
+        /// </summary>
+        internal static string VoltageTolerance {
+            get {
+                return ResourceManager.GetString("VoltageTolerance", resourceCulture);
             }
         }
     }

@@ -48,7 +48,9 @@ namespace TeleofisTestApp
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                Console.WriteLine("Disconnected");
             }
         }
+
     }
 }

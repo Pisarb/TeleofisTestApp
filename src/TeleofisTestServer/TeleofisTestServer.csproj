@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Protocols.Teleofis\Protocols.Teleofis.csproj" />
+    <ProjectReference Include="..\Protocols.Teleofis\Protocols.Teleofis.csproj" />
   </ItemGroup>
 
 </Project>
